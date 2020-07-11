@@ -26,11 +26,11 @@
 #include <stdint.h>
 #if defined(__ANDROID__) || defined(AROS) \
  || ( defined(__APPLE__) && defined(__MACH__) )
-#include <sys/time.h>
 #else
 #include <time.h>
 #endif
 
+#include <sys/time.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

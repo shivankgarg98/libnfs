@@ -1,8 +1,8 @@
-noinst_PROGRAMS = nfsclient-async nfsclient-raw nfsclient-sync nfsclient-bcast nfsclient-listservers nfs-fh nfs-io nfs-ln nfs4-cat portmap-client portmap-server
-
-if HAVE_TALLOC_TEVENT
-noinst_PROGRAMS += nfs4-cat-talloc
-endif
+noinst_PROGRAMS = nfs-test nfs-test2 nfsclient-raw
+ATF_TESTS_C= nfs-test3 
+noinst_LTLIBRARIES = libnfsutils.la libauditutils.la
+libnfsutils_la_SOURCES = nfs-utils.h nfs-utils.c
+libauditutils_la_SOURCES = audit-utils.c audit-utils.h
 
 AM_CPPFLAGS = \
 	-I$(abs_top_srcdir)/include \
@@ -15,16 +15,10 @@ AM_CPPFLAGS = \
 	-I$(abs_top_srcdir)/rquota \
 	"-D_U_=__attribute__((unused))"
 
-COMMON_LIBS = ../lib/libnfs.la -lpopt
-nfsclient_async_LDADD = $(COMMON_LIBS)
+COMMON_LIBS = ../lib/libnfs.la libnfsutils.la -lpopt libauditutils.la
+nfs_test_LDADD = $(COMMON_LIBS)
 nfsclient_raw_LDADD = $(COMMON_LIBS)
-nfsclient_sync_LDADD = $(COMMON_LIBS)
-nfsclient_bcast_LDADD = $(COMMON_LIBS)
-nfsclient_listservers_LDADD = $(COMMON_LIBS)
-nfs_fh_LDADD = $(COMMON_LIBS)
-nfs_io_LDADD = $(COMMON_LIBS)
-nfs_ln_LDADD = $(COMMON_LIBS)
-nfs4_cat_LDADD = $(COMMON_LIBS) -levent
-nfs4_cat_talloc_LDADD = $(COMMON_LIBS) -ltevent -ltalloc
-portmap_client_LDADD = $(COMMON_LIBS)
-portmap_server_LDADD = $(COMMON_LIBS) -levent
+nfs_test2_LDADD = $(COMMON_LIBS)
+nfs_test3_LDADD = $(COMMON_LIBS)
+
+.include <bsd.test.mk>
