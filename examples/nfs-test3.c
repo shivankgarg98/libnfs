@@ -9,7 +9,8 @@ static const char *successreg = "fileforaudit.*return,success";
 static const char *auclass = "nfs";
 static struct pollfd fds[1];
 
-static void rquota_getquota_cb(struct rpc_context *rpc, int status, void * args,  void *private_data)
+static void
+mkdir_status_cb(struct rpc_context *rpc, int status, void * data,  void *private_data)
 {
 	struct client *client = private_data;
 	
@@ -36,20 +37,16 @@ mkdir_cb(struct rpc_context *rpc, int status, void *data, void *private_data)
 	}
 	
 	int i;
-	printf("HI\n");
-        scanf("%d",&i);
         MKDIR3args args;
         memset(&args, 0, sizeof(MKDIR3args));
         args.where.dir = client->rootfh;
         args.where.name = "fileforaudit";
         args.attributes.mode.set_it = 1;
         args.attributes.mode.set_mode3_u.mode = 420;
-	printf("rquota %d \n", client->is_finished);
 
 	printf("Connected to RPC.NFSD on %s:%d\n", client->server, client->mount_port);
-	printf("Send FSINFO request\n");
-        if (rpc_nfs3_mkdir_async(rpc, rquota_getquota_cb, &args, client) != 0) {
-                printf("Failed to send fsinfo request\n");
+        if (rpc_nfs3_mkdir_async(rpc, mkdir_status_cb, &args, client) != 0) {
+                printf("Failed to send mkdir request\n");
                 exit(10);
         }
 
@@ -58,7 +55,7 @@ ATF_TC_WITH_CLEANUP(mkdir_success);
 ATF_TC_HEAD(mkdir_success, tc)
 {
 	atf_tc_set_md_var(tc, "descr", "Tests the audit of a successful "
-					"mkdir(2) call");
+					"NFS mkdir RPC");
 }
 
 ATF_TC_BODY(mkdir_success, tc)

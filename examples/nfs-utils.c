@@ -1,4 +1,3 @@
-
 #include "nfs-utils.h"
 
 static void
@@ -10,10 +9,10 @@ nfs_connect_cb(struct rpc_context *rpc, int status, void *data, void *private_da
 		printf("connection to RPC.MOUNTD on server %s failed\n", client->server);
 		exit(10);
 	}
-	
+
 	printf("Connected to RPC.NFSD on %s:%d\n", client->server, client->mount_port);
 
-	if (rpc_nfs3_null_async(rpc, client->audit_cb, client) != 0) {
+	if (rpc_nfs3_null_async(rpc, client->au_rpc_cb, client) != 0) {
 		printf("Failed to sent a NULL RPC\n");
 		exit(10);
 	}
@@ -69,8 +68,8 @@ mount_export_cb(struct rpc_context *rpc, int status, void *data, void *private_d
 
 	printf("Got reply from server for MOUNT/EXPORT procedure.\n");
 	while (export != NULL) {
-	      printf("Export: %s\n", export->ex_dir);
-	      export = export->ex_next;
+		printf("Export: %s\n", export->ex_dir);
+		export = export->ex_next;
 	}
 	printf("Send MOUNT/MNT command for %s\n", client->export);
 	if (rpc_mount_mnt_async(rpc, mount_mnt_cb, client->export, client) != 0) {
@@ -118,7 +117,6 @@ mount_connect_cb(struct rpc_context *rpc, int status, void *data, void *private_
 		exit(10);
 	}
 }
-
 
 static void
 pmap_getport2_cb(struct rpc_context *rpc, int status, void *data, void *private_data)
@@ -249,4 +247,3 @@ nfs_destroy(struct rpc_context *rpc)
 	rpc_destroy_context(rpc);
 	rpc = NULL;
 }
-
